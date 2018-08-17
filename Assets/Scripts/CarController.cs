@@ -21,12 +21,16 @@ public class CarController : MonoBehaviour
     public float MaxGroundCheckDistance;
 
     public float TerrainRotationLerpT;
+    public float MaxTerrainAngle;
 
     private CharacterController _controller;
     private Vector3 _velocity;
     private bool _onGround;
 
     public TrailRenderer[] TrailRenderers;
+    public Transform RotationRoot;
+
+    private Quaternion _targetRotation;
 
     void Awake()
     {
@@ -46,7 +50,13 @@ public class CarController : MonoBehaviour
         _onGround = false;
 
         RaycastHit hit;
-        if (Physics.SphereCast(transform.position + transform.up * (_controller.center.y + 0.1f), _controller.radius, transform.up * -1f, out hit, 0.1f + MaxGroundCheckDistance, GroundLayerMask))
+        /*
+        if (Physics.SphereCast(RotationRoot.transform.position + RotationRoot.transform.up * (_controller.center.y + 0.1f), _controller.radius, RotationRoot.transform.up * -1f, out hit, 0.1f + MaxGroundCheckDistance, GroundLayerMask))
+        {
+            _onGround = true;
+        }
+        */
+        if (Physics.Raycast(RotationRoot.transform.position + RotationRoot.transform.up * 0.1f, RotationRoot.transform.up * -1f, out hit, 0.1f + MaxGroundCheckDistance, GroundLayerMask))
         {
             _onGround = true;
         }
@@ -69,12 +79,12 @@ public class CarController : MonoBehaviour
         // Add acceleration only if on ground
         if (_onGround)
         {
-            _velocity += transform.forward * forwardInput * Acceleration * dt;
+            _velocity += RotationRoot.transform.forward * forwardInput * Acceleration * dt;
         }
 
         // Figure out how much extra dampening should happen because of drifing angle
         // Most dampening happens when car is at MaxDriftingAngle degrees to velocity
-        var angleDiff = Vector3.Angle(transform.forward, Vector3.ProjectOnPlane(_velocity * (Vector3.Dot(_velocity.normalized, transform.forward) > 0f ? 1f : -1f), transform.up));
+        var angleDiff = Vector3.Angle(RotationRoot.transform.forward, Vector3.ProjectOnPlane(_velocity * (Vector3.Dot(_velocity.normalized, RotationRoot.transform.forward) > 0f ? 1f : -1f), RotationRoot.transform.up));
         var driftingDampeningT = Mathf.Clamp(angleDiff / MaximumDriftingAngle, 0f, 1f);
         if (driftingDampeningT > ShowSkidMarksOnDriftingT)
         {
@@ -93,13 +103,13 @@ public class CarController : MonoBehaviour
         _velocity *= dampening;
 
         // Helpers
-        var localUpVelocity = Vector3.ProjectOnPlane(_velocity, transform.up);
-        var goingForward = Vector3.Dot(_velocity.normalized, transform.forward) > 0f;
+        var localUpVelocity = Vector3.ProjectOnPlane(_velocity, RotationRoot.transform.up);
+        var goingForward = Vector3.Dot(_velocity.normalized, RotationRoot.transform.forward) > 0f;
 
         var targetAngleDiff = 0f;
 
         // If on ground, car can be turned
-        // Maximum turning angle is between transform.forward and _velocity and is based on velocity inversely
+        // Maximum turning angle is between RotationRoot.transform.forward and _velocity and is based on velocity inversely
         if (_onGround && localUpVelocity.magnitude > 0.001f)
         {
             var turningT = Mathf.Clamp(localUpVelocity.magnitude / MaxTurningVelocity, 0f, 1f);
@@ -120,39 +130,92 @@ public class CarController : MonoBehaviour
 
         if (frontSideVelocity.magnitude > 0.001f)
         {
-            var targetRotation = Quaternion.AngleAxis(targetAngleDiff, transform.up) * transform.rotation;
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, DriftingAngleDampening);
+            var targetRotation = Quaternion.AngleAxis(targetAngleDiff, RotationRoot.transform.up) * RotationRoot.transform.rotation;
+            RotationRoot.transform.rotation = Quaternion.Slerp(RotationRoot.transform.rotation, targetRotation, DriftingAngleDampening);
         }
 
         // If bumping into objects, force car to go along the object
         // TODO
 
-        // Add gravity
-        _velocity += Vector3.down * Gravity * dt;
-
         // If on ground, map _velocity to local up plane
         if (_onGround)
         {
-            _velocity = Vector3.ProjectOnPlane(_velocity, transform.up);
+            _velocity = Vector3.ProjectOnPlane(_velocity, RotationRoot.transform.up);
         }
+
+        // Add gravity
+        _velocity += Vector3.down * Gravity * dt;
 
         // If on ground, make the car rotate to match the terrain angle
         // Raycast 3 times from front center and both back wheels downwards to find the current plane.
-        // Make the car rotate to that rotation slowly
+        // Make the car rotate to that rotation smoothly
         if (_onGround)
         {
-            var frontOrigin = transform.position + transform.forward * 0.5f + transform.up * 0.5f;
-            var backLeftOrigin = transform.position + transform.forward * -0.5f + transform.up * 0.5f + transform.right * -0.5f;
-            var backRightOrigin = transform.position + transform.forward * -0.5f + transform.up * 0.5f + transform.right * 0.5f;
+            var raycastDistance = 4f;
+            var frontLeftOrigin = RotationRoot.transform.position + RotationRoot.transform.forward * 1f + RotationRoot.transform.up * 2.5f + RotationRoot.transform.right * -1f;
+            var frontRightOrigin = RotationRoot.transform.position + RotationRoot.transform.forward * 1f + RotationRoot.transform.up * 2.5f + RotationRoot.transform.right * 1f;
+            var backLeftOrigin = RotationRoot.transform.position + RotationRoot.transform.forward * -1f + RotationRoot.transform.up * 2.5f + RotationRoot.transform.right * -1f;
+            var backRightOrigin = RotationRoot.transform.position + RotationRoot.transform.forward * -1f + RotationRoot.transform.up * 2.5f + RotationRoot.transform.right * 1f;
 
-            RaycastHit frontHit, backLeftHit, backRightHit;
-            bool frontWasHit, backLeftWasHit, backRightWasHit;
-            frontWasHit = Physics.Raycast(frontOrigin, transform.up * -1f, out frontHit, 0.6f, GroundLayerMask);
-            backLeftWasHit = Physics.Raycast(backLeftOrigin, transform.up * -1f, out backLeftHit, 0.6f, GroundLayerMask);
-            backRightWasHit = Physics.Raycast(backRightOrigin, transform.up * -1f, out backRightHit, 0.6f, GroundLayerMask);
+            RaycastHit frontLeftHit, frontRightHit, backLeftHit, backRightHit;
+            bool frontLeftWasHit, frontRightWasHit, backLeftWasHit, backRightWasHit;
+            frontLeftWasHit = Physics.Raycast(frontLeftOrigin, RotationRoot.transform.up * -1f, out frontLeftHit, raycastDistance, GroundLayerMask);
+            frontRightWasHit = Physics.Raycast(frontRightOrigin, RotationRoot.transform.up * -1f, out frontRightHit, raycastDistance, GroundLayerMask);
+            backLeftWasHit = Physics.Raycast(backLeftOrigin, RotationRoot.transform.up * -1f, out backLeftHit, raycastDistance, GroundLayerMask);
+            backRightWasHit = Physics.Raycast(backRightOrigin, RotationRoot.transform.up * -1f, out backRightHit, raycastDistance, GroundLayerMask);
 
-            // TODO
+            // Make two triangles. If all vertices of both triangles are defined, average the normal plane
+            // Otherwise, use one of them
+            // Forward vector is forward mapped to the new normal
+            // If neither can be defined, do not rotate
+            Plane[] planes = new Plane[2];
+            var firstDefined = frontLeftWasHit && backLeftWasHit && backRightWasHit;
+            var secondDefined = frontLeftWasHit && frontRightWasHit && backRightWasHit;
+
+            if (firstDefined)
+            {
+                planes[0] = new Plane(frontLeftHit.point, backRightHit.point, backLeftHit.point);
+            }
+            if (secondDefined)
+            {
+                planes[1] = new Plane(frontLeftHit.point, frontRightHit.point, backRightHit.point);
+            }
+
+            Vector3 normal = Vector3.zero;
+
+            if (firstDefined && secondDefined)
+            {
+                normal = (planes[0].normal + planes[1].normal) * 0.5f;
+            }
+            else if (firstDefined || secondDefined)
+            {
+                normal = firstDefined ? planes[0].normal : planes[1].normal;
+            }
+
+            // Don't allow the car to be flipped over too much
+            var upDiff = Quaternion.FromToRotation(transform.up, normal).eulerAngles;
+            if (upDiff.x > 180f) upDiff.x -= 360f;
+            if (upDiff.z > 180f) upDiff.z -= 360f;
+            upDiff.x = Mathf.Clamp(upDiff.x, -MaxTerrainAngle, MaxTerrainAngle);
+            upDiff.z = Mathf.Clamp(upDiff.z, -MaxTerrainAngle, MaxTerrainAngle);
+            var clampedNormal = Quaternion.Euler(upDiff) * transform.up;
+
+            if (normal.magnitude > 0f)
+            {
+                var projectedForward = Vector3.ProjectOnPlane(RotationRoot.transform.forward, clampedNormal);
+                _targetRotation = Quaternion.LookRotation(projectedForward, clampedNormal);
+            }
         }
+
+        // If the car ever ends up upside down, just target it to be the right way
+        // Also target the car to be upwards when it's in the air
+        if (!_onGround || Vector3.Dot(RotationRoot.transform.up, Vector3.up) < 0f)
+        {
+            var projectedForward = Vector3.ProjectOnPlane(RotationRoot.transform.forward, Vector3.up);
+            _targetRotation = Quaternion.LookRotation(projectedForward, Vector3.up);
+        }
+
+        RotationRoot.transform.rotation = Quaternion.Slerp(RotationRoot.transform.rotation, _targetRotation, TerrainRotationLerpT * (_onGround ? 1f : 0.15f));
 
         // No skidmarks on air
         if (!_onGround)
