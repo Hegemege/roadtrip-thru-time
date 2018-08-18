@@ -159,7 +159,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1847
+    m_Bits: 5943
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -196,6 +196,8 @@ MonoBehaviour:
   AllowTimeRewind: 1
   SpawnEnergy: 100
   AccelerationEnergyConsumption: 10
+  EnergyPerCollectible: 50
+  RewindCount: 5
   Camera: {fileID: 20294178711804702}
   CarPool: {fileID: 114469672890190480}
   GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}

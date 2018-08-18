@@ -673,6 +673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4130290857068652}
+  - component: {fileID: 114645030468960696}
   m_Layer: 10
   m_Name: FrontAxle
   m_TagString: Untagged
@@ -1429,6 +1430,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4750167316124010}
+  - component: {fileID: 114920840850960018}
   m_Layer: 10
   m_Name: BackAxle
   m_TagString: Untagged
@@ -7391,6 +7393,38 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   ObstacleHitVelocityClamp: 0.15
+  Energy: 0
+  WheelRotators:
+  - {fileID: 114920840850960018}
+  - {fileID: 114645030468960696}
+--- !u!114 &114645030468960696
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1416946786529386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0187fa519a462534cb90120ac13c2033, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RotationAxis: {x: 1, y: 0, z: 0}
+  RotationSpeed: -90
+  RotationScale: 1
+--- !u!114 &114920840850960018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1757703725767022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0187fa519a462534cb90120ac13c2033, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RotationAxis: {x: 1, y: 0, z: 0}
+  RotationSpeed: -90
+  RotationScale: 1
 --- !u!143 &143180025412570984
 CharacterController:
   m_ObjectHideFlags: 1

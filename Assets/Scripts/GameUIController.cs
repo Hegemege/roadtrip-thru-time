@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameUIController : MonoBehaviour
 {
@@ -11,11 +12,14 @@ public class GameUIController : MonoBehaviour
     public GameObject PlayOverlay;
     public GameObject StopOverlay;
 
+    public Text RewindsText;
+
     public float FlashingSpeed;
     private float _flashingTime;
 
     private UIOverlayState _state;
     private bool _visible;
+    private int _previousRewindsCount;
 
     void Awake()
     {
@@ -42,6 +46,12 @@ public class GameUIController : MonoBehaviour
 
         var energyT = GameManager.Instance.ActiveCar.Energy / GameManager.Instance.SpawnEnergy;
         EnergyBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, energyT * 790);
+
+        if (GameManager.Instance.RewindCount != _previousRewindsCount)
+        {
+            _previousRewindsCount = GameManager.Instance.RewindCount;
+            RewindsText.text = _previousRewindsCount.ToString();
+        }
     }
 
     public void SetUIState(UIOverlayState state, bool activeValue = true)

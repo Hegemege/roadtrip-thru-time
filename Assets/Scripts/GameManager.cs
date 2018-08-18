@@ -36,6 +36,12 @@ public class GameManager : MonoBehaviour
     public bool AllowTimeRewind;
     public float SpawnEnergy;
     public float AccelerationEnergyConsumption;
+    public float EnergyPerCollectible;
+
+    public int RewindCount;
+
+    [HideInInspector]
+    public bool LevelEnded;
 
     // Self references
     public Camera Camera;
@@ -77,17 +83,18 @@ public class GameManager : MonoBehaviour
     {
         var carExists = ActiveCar != null;
         // Rewinding input
-        if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind)
+        if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind && !Rewinding && RewindCount > 0)
         {
             GameUIController.SetUIState(UIOverlayState.Rewind);
             Rewinding = true;
             ActiveCar.PlayerControlled = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind)
+        if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind && Rewinding)
         {
             GameUIController.SetUIState(UIOverlayState.Record);
             Rewinding = false;
+            RewindCount -= 1;
             TimeManager.CutTimeline(ActiveCar);
 
             var oldCar = ActiveCar;

@@ -34,6 +34,8 @@ public class CarController : MonoBehaviour
     [HideInInspector]
     public float Energy;
 
+    public List<Rotator> WheelRotators;
+
     // Private
 
     private CharacterController _controller;
@@ -56,7 +58,11 @@ public class CarController : MonoBehaviour
 
     void Update()
     {
-
+        var scale = Vector3.ProjectOnPlane(_velocity, transform.up).magnitude * (Vector3.Dot(_velocity, transform.forward) > 0f ? -1f : 1f);
+        for (var i = 0; i < WheelRotators.Count; i++)
+        {
+            WheelRotators[i].RotationScale = scale;
+        }
     }
 
     void FixedUpdate()
@@ -143,7 +149,6 @@ public class CarController : MonoBehaviour
         _currentSnapshot = null;
         _playingTimeline = false;
     }
-
 
     /// <summary>
     /// Refresh the _onGround state.
@@ -343,5 +348,15 @@ public class CarController : MonoBehaviour
         TrailRenderers[1].emitting = showSkidMarks;
 
         _controller.Move(_velocity);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("EnergyCollectible"))
+        {
+            Destroy(other.gameObject);
+            Energy += GameManager.Instance.EnergyPerCollectible;
+            Energy = Mathf.Clamp(Energy, 0f, GameManager.Instance.SpawnEnergy);
+        }
     }
 }

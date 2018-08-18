@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4771198988871934}
   - component: {fileID: 33636636781020260}
   - component: {fileID: 23835618806795458}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,25 +38,9 @@ GameObject:
   - component: {fileID: 4650475584970300}
   - component: {fileID: 33182894566361974}
   - component: {fileID: 23068921531037666}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: barrelLarge (1)
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1082524605511490
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4084204182662512}
-  - component: {fileID: 135638111842049540}
-  m_Layer: 12
-  m_Name: Collider
-  m_TagString: EnergyCollectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +55,7 @@ GameObject:
   - component: {fileID: 4602870641747908}
   - component: {fileID: 33386620971622964}
   - component: {fileID: 23173362135443090}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +72,7 @@ GameObject:
   - component: {fileID: 4856713022064410}
   - component: {fileID: 33645851570098428}
   - component: {fileID: 23991610297688720}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: barrelLarge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +88,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4885296357960704}
   - component: {fileID: 114942459410074940}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +105,7 @@ GameObject:
   - component: {fileID: 4503611240679266}
   - component: {fileID: 33435451162500308}
   - component: {fileID: 23228695980841522}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4456146987311592}
   - component: {fileID: 114930649594968964}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,9 +136,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4851655069222730}
-  m_Layer: 0
+  - component: {fileID: 135755963249608280}
+  m_Layer: 12
   m_Name: EnergyCollectible
-  m_TagString: Untagged
+  m_TagString: EnergyCollectible
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,7 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4606037785877792}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4307092472608788}
   - component: {fileID: 114075770132712174}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: RotatorRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4023760773227694}
   - component: {fileID: 120063613239289442}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: LineRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,7 +201,7 @@ GameObject:
   - component: {fileID: 4138829250612394}
   - component: {fileID: 33058865355633818}
   - component: {fileID: 23758051344350612}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +218,7 @@ GameObject:
   - component: {fileID: 4987055067136080}
   - component: {fileID: 33179518267532794}
   - component: {fileID: 23487601962105920}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,7 +235,7 @@ GameObject:
   - component: {fileID: 4477745169569394}
   - component: {fileID: 33159601858535796}
   - component: {fileID: 23017304656057762}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +252,7 @@ GameObject:
   - component: {fileID: 4966814580287356}
   - component: {fileID: 33994984382995600}
   - component: {fileID: 23688261018896186}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +269,7 @@ GameObject:
   - component: {fileID: 4323818015868456}
   - component: {fileID: 33167540271842272}
   - component: {fileID: 23825561352912228}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: pipeStand (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,19 +284,6 @@ Transform:
   m_GameObject: {fileID: 1396972222107156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4851655069222730}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4084204182662512
-Transform:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1082524605511490}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4851655069222730}
@@ -467,7 +439,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4307092472608788}
-  - {fileID: 4084204182662512}
   - {fileID: 4023760773227694}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1100,15 +1071,15 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 0
---- !u!135 &135638111842049540
+--- !u!135 &135755963249608280
 SphereCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1082524605511490}
+  m_GameObject: {fileID: 1283807381164062}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 2.4178562
-  m_Center: {x: 0, y: 0.22589254, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
