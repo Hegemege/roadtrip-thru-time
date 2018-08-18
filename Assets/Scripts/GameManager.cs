@@ -15,6 +15,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Globals
+    [HideInInspector]
+    public TimeManager TimeManager;
+
     void Awake()
     {
         // Setup singleton
@@ -26,6 +30,9 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         _instance = this;
+
+        // Self references
+        TimeManager = GetComponent<TimeManager>();
     }
 
     void Update()

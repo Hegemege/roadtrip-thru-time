@@ -5,16 +5,16 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     public float Acceleration;
+    public float MaxVelocity;
+    public float VelocityDampening;
+    public float OnGroundDampening;
+
     public float TurningSpeed;
     public float MaximumDriftingAngle;
     public float DriftingAngleDampening;
     public float DriftingVelocityDampening;
     public float MaxTurningVelocity;
     public float ShowSkidMarksOnDriftingT;
-
-    public float MaxVelocity;
-    public float VelocityDampening;
-    public float OnGroundDampening;
 
     public float Gravity;
     public LayerMask GroundLayerMask;
@@ -23,14 +23,20 @@ public class CarController : MonoBehaviour
     public float TerrainRotationLerpT;
     public float MaxTerrainAngle;
 
+    public TrailRenderer[] TrailRenderers;
+    public Transform RotationRoot;
+
+    public bool PlayerControlled;
+
+    // Private
+
     private CharacterController _controller;
     private Vector3 _velocity;
     private bool _onGround;
 
-    public TrailRenderer[] TrailRenderers;
-    public Transform RotationRoot;
-
     private Quaternion _targetRotation;
+    private float _forwardInput;
+    private float _steeringInput;
 
     void Awake()
     {
@@ -43,6 +49,11 @@ public class CarController : MonoBehaviour
     {
         UpdateOnGround();
         Movement();
+    }
+
+    public TimeSnapshot GetTimeSnapshot()
+    {
+        return new TimeSnapshot(transform.position, _velocity, RotationRoot.transform.rotation, _targetRotation, _forwardInput, _steeringInput);
     }
 
     private void UpdateOnGround()
@@ -68,8 +79,12 @@ public class CarController : MonoBehaviour
 
         var showSkidMarks = false;
 
-        var forwardInput = Mathf.Clamp(Input.GetAxis("Vertical"), -0.5f, 1f); // Backwards driving speed is half
-        var steeringInput = Input.GetAxis("Horizontal");
+        if (PlayerControlled)
+        {
+            _forwardInput = Mathf.Clamp(Input.GetAxis("Vertical"), -0.5f, 1f); // Backwards driving speed is half
+            _steeringInput = Input.GetAxis("Horizontal");
+        }
+
         /*
         newForward *= forwardInput * Acceleration * dt;
         newForward = Quaternion.AngleAxis(steeringInput * TurningSpeed * dt, Vector3.up) * newForward;
@@ -79,7 +94,7 @@ public class CarController : MonoBehaviour
         // Add acceleration only if on ground
         if (_onGround)
         {
-            _velocity += RotationRoot.transform.forward * forwardInput * Acceleration * dt;
+            _velocity += RotationRoot.transform.forward * _forwardInput * Acceleration * dt;
         }
 
         // Figure out how much extra dampening should happen because of drifing angle
@@ -115,7 +130,7 @@ public class CarController : MonoBehaviour
             var turningT = Mathf.Clamp(localUpVelocity.magnitude / MaxTurningVelocity, 0f, 1f);
 
             targetAngleDiff = turningT *
-                steeringInput *
+                _steeringInput *
                 MaximumDriftingAngle *
                 (goingForward ? 1f : -1f);
         }
