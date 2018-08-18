@@ -26,7 +26,6 @@ public class TimeManager : MonoBehaviour
         if (GameManager.Instance.Rewinding && _current.Previous != null)
         {
             _current = _current.Previous;
-            // TODO: Rewind time for all cars
             GameManager.Instance.ActiveCar.ApplySnapshot(_current.Value);
         }
     }

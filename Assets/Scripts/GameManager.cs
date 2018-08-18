@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     public bool RecordSnapshots;
     public bool Rewinding;
 
+    public bool AllowTimeRewind;
+
     // Self references
     public Camera Camera;
     public CarPool CarPool;
@@ -54,13 +56,13 @@ public class GameManager : MonoBehaviour
     {
         var carExists = ActiveCar != null;
         // Rewinding input
-        if (Input.GetKeyDown(KeyCode.Space) && carExists)
+        if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind)
         {
             Rewinding = true;
             ActiveCar.PlayerControlled = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space) && carExists)
+        if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind)
         {
             Rewinding = false;
             TimeManager.CutTimeline(ActiveCar);
@@ -75,7 +77,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Update time states - record only if car exists and not rewinding time
-        RecordSnapshots = carExists && !Rewinding;
+        RecordSnapshots = carExists && !Rewinding && AllowTimeRewind;
     }
 
     public void StartLevel()

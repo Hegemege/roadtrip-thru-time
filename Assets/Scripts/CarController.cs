@@ -230,8 +230,8 @@ public class CarController : MonoBehaviour
         var hitRaycastOrigin = transform.position + _controller.center.y * transform.up;
         var hitRaycastRange = _controller.radius + 0.4f;
         if (Physics.Raycast(hitRaycastOrigin, velocityNormalized, hitRaycastRange, ObstacleLayerMask) ||
-           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -1f, hitRaycastRange, ObstacleLayerMask) ||
-           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right, hitRaycastRange, ObstacleLayerMask))
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -0.75f, hitRaycastRange, ObstacleLayerMask) ||
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * 0.75f, hitRaycastRange, ObstacleLayerMask))
         {
             _velocity = Vector3.ClampMagnitude(_velocity, ObstacleHitVelocityClamp);
         }
