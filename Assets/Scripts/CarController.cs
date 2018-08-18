@@ -42,50 +42,15 @@ public class CarController : MonoBehaviour
     private LinkedListNode<TimeSnapshot> _currentSnapshot;
     private bool _playingTimeline;
 
-    private int _id;
-
     void Awake()
     {
         _controller = GetComponent<CharacterController>();
-        _id = Random.Range(0, 10000);
         Reset();
     }
 
     void Update()
     {
-        return;
-        if (GameManager.Instance.Rewinding)
-        {
-            if (_playingTimeline)
-            {
-                if (_currentSnapshot.Previous != null)
-                {
-                    ApplySnapshot(_currentSnapshot.Value);
-                    _currentSnapshot = _currentSnapshot.Previous;
-                }
-                // Else the car has reached zero time and should just be staying still
-            }
-            // Else the Time Manager applies the snapshot to the current car
 
-            return;
-        }
-
-        if (_playingTimeline)
-        {
-            // If there are snapshots left to be played back, play them. Otherwise, set all inputs to zero, let the physics play out and record additional snapshots
-            if (_currentSnapshot.Next != null)
-            {
-                //Debug.Log("Apply forward " + _id + " " + _currentSnapshot.Value.CarPosition);
-                ApplySnapshot(_currentSnapshot.Value);
-                _currentSnapshot = _currentSnapshot.Next;
-                return;
-            }
-            else
-            {
-                _timeline.AddLast(GetTimeSnapshot());
-                _currentSnapshot = _timeline.Last;
-            }
-        }
     }
 
     void FixedUpdate()
@@ -96,11 +61,12 @@ public class CarController : MonoBehaviour
             {
                 if (_currentSnapshot.Previous != null)
                 {
-                    ApplySnapshot(_currentSnapshot.Value);
                     _currentSnapshot = _currentSnapshot.Previous;
+                    ApplySnapshot(_currentSnapshot.Value);
                 }
                 // Else the car has reached zero time and should just be staying still
             }
+            // Else the Time Manager applies the snapshot to the current car
             return;
         }
 
@@ -109,8 +75,8 @@ public class CarController : MonoBehaviour
             // If there are snapshots left to be played back, play them. Otherwise, set all inputs to zero, let the physics play out and record additional snapshots
             if (_currentSnapshot.Next != null)
             {
-                ApplySnapshot(_currentSnapshot.Value);
                 _currentSnapshot = _currentSnapshot.Next;
+                ApplySnapshot(_currentSnapshot.Value);
                 return;
             }
             else

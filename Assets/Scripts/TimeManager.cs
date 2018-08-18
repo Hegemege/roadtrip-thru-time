@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
-    public float MaxSnapshots;
-
+    // Snapshot count is kept at bay 
     private LinkedList<TimeSnapshot> _snapshots;
     private LinkedListNode<TimeSnapshot> _current;
 
