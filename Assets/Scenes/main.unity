@@ -90,7 +90,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -711,6 +711,23 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d658ff775ad7df9429e38c10e6df8ae2, type: 3}
   m_IsPrefabAsset: 0
+--- !u!1 &1372404510 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 9ba36f46203e1434b95c676bd998236d,
+    type: 3}
+  m_PrefabInternal: {fileID: 574960463}
+--- !u!65 &1372404511
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1372404510}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10, y: 5.1, z: 10.4}
+  m_Center: {x: 5, y: 2.55, z: 4.8}
 --- !u!4 &1372404513 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 9ba36f46203e1434b95c676bd998236d,

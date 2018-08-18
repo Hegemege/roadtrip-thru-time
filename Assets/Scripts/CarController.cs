@@ -28,6 +28,9 @@ public class CarController : MonoBehaviour
 
     public bool PlayerControlled;
 
+    public LayerMask ObstacleLayerMask;
+    public float ObstacleHitVelocityClamp;
+
     // Private
 
     private CharacterController _controller;
@@ -222,8 +225,16 @@ public class CarController : MonoBehaviour
             RotationRoot.transform.rotation = Quaternion.Slerp(RotationRoot.transform.rotation, targetRotation, DriftingAngleDampening);
         }
 
-        // If bumping into objects, force car to go along the object
-        // TODO
+        // If bumping into objects (front, frontleft, frontright), decrease speed
+        var velocityNormalized = _velocity.normalized;
+        var hitRaycastOrigin = transform.position + _controller.center.y * transform.up;
+        var hitRaycastRange = _controller.radius + 0.4f;
+        if (Physics.Raycast(hitRaycastOrigin, velocityNormalized, hitRaycastRange, ObstacleLayerMask) ||
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -1f, hitRaycastRange, ObstacleLayerMask) ||
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right, hitRaycastRange, ObstacleLayerMask))
+        {
+            _velocity = Vector3.ClampMagnitude(_velocity, ObstacleHitVelocityClamp);
+        }
 
         // If on ground, map _velocity to local up plane
         if (_onGround)

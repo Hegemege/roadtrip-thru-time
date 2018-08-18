@@ -7387,6 +7387,9 @@ MonoBehaviour:
   - {fileID: 96325336652353034}
   RotationRoot: {fileID: 4781948230447118}
   PlayerControlled: 0
+  ObstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!143 &143180025412570984
 CharacterController:
   m_ObjectHideFlags: 1
