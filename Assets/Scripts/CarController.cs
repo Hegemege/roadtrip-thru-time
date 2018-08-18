@@ -170,11 +170,12 @@ public class CarController : MonoBehaviour
             _steeringInput = Input.GetAxis("Horizontal");
 
             // Calculate energy loss
-            if (Energy > 0f)
+            var energyConsumption = Mathf.Abs(_forwardInput);
+            if (Energy > 0f && energyConsumption > 0f)
             {
-                Energy -= dt * GameManager.Instance.AccelerationEnergyConsumption;
+                Energy -= dt * GameManager.Instance.AccelerationEnergyConsumption * energyConsumption;
             }
-            else
+            else if (Energy <= 0f)
             {
                 _forwardInput = 0f;
                 _steeringInput = 0f;
