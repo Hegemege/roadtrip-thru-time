@@ -14,7 +14,7 @@ public class TimeManager : MonoBehaviour
         _snapshots = new LinkedList<TimeSnapshot>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (GameManager.Instance.RecordSnapshots)
         {
