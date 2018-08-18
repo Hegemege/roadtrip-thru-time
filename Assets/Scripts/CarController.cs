@@ -38,35 +38,131 @@ public class CarController : MonoBehaviour
     private float _forwardInput;
     private float _steeringInput;
 
+    private LinkedList<TimeSnapshot> _timeline;
+    private LinkedListNode<TimeSnapshot> _currentSnapshot;
+    private bool _playingTimeline;
+
     void Awake()
     {
         _controller = GetComponent<CharacterController>();
 
-        _velocity = Vector3.zero;
+        Reset();
+    }
+
+    void Update()
+    {
+        if (GameManager.Instance.Rewinding)
+        {
+            if (_playingTimeline)
+            {
+                if (_currentSnapshot.Previous != null)
+                {
+                    _currentSnapshot = _currentSnapshot.Previous;
+                    ApplySnapshot(_currentSnapshot.Value);
+                }
+                // Else the car has reached zero time and should just be staying still
+            }
+            // Else the Time Manager applies the snapshot to the current car
+
+            return;
+        }
+
+        if (_playingTimeline)
+        {
+            // If there are snapshots left to be played back, play them. Otherwise, set all inputs to zero, let the physics play out and record additional snapshots
+            if (_currentSnapshot.Next != null)
+            {
+                _currentSnapshot = _currentSnapshot.Next;
+                ApplySnapshot(_currentSnapshot.Value);
+                return;
+            }
+            else
+            {
+                _timeline.AddLast(GetTimeSnapshot());
+                _currentSnapshot = _timeline.Last;
+            }
+        }
     }
 
     void FixedUpdate()
     {
+        if (GameManager.Instance.Rewinding)
+        {
+            return;
+        }
+
+        if (_playingTimeline)
+        {
+            // If there are snapshots left to be played back, play them. Otherwise, set all inputs to zero, let the physics play out and record additional snapshots
+            if (_currentSnapshot.Next != null)
+            {
+                return;
+            }
+            else
+            {
+                _forwardInput = 0f;
+                _steeringInput = 0f;
+            }
+        }
+
         UpdateOnGround();
         Movement();
     }
 
+    /// <summary>
+    /// Get a snapshot for storing the car's position, rotation and movement.
+    /// </summary>
+    /// <returns></returns>
     public TimeSnapshot GetTimeSnapshot()
     {
         return new TimeSnapshot(transform.position, _velocity, RotationRoot.transform.rotation, _targetRotation, _forwardInput, _steeringInput);
     }
 
+    /// <summary>
+    /// Applies the given snapshot to the car. After snapshots have been applied, the car can't be controlled anymore.
+    /// </summary>
+    public void ApplySnapshot(TimeSnapshot snapshot)
+    {
+        transform.position = snapshot.CarPosition;
+        _velocity = snapshot.Velocity;
+        RotationRoot.transform.rotation = snapshot.CarRotation;
+        _targetRotation = snapshot.TargetRotation;
+        _forwardInput = snapshot.ForwardInput;
+        _steeringInput = snapshot.SteeringInput;
+    }
+
+    public void SetTimeline(LinkedList<TimeSnapshot> timeline, LinkedListNode<TimeSnapshot> current)
+    {
+        _timeline = timeline;
+        _currentSnapshot = current;
+        _playingTimeline = true;
+    }
+
+    /// <summary>
+    /// Reset the car controller such that it can be reused.
+    /// </summary>
+    public void Reset()
+    {
+        _velocity = Vector3.zero;
+        _targetRotation = Quaternion.LookRotation(transform.forward, Vector3.up);
+        _onGround = false;
+        _forwardInput = 0f;
+        _steeringInput = 0f;
+
+        _timeline = new LinkedList<TimeSnapshot>();
+        _currentSnapshot = null;
+        _playingTimeline = false;
+    }
+
+
+    /// <summary>
+    /// Refresh the _onGround state.
+    /// </summary>
     private void UpdateOnGround()
     {
         _onGround = false;
 
         RaycastHit hit;
-        /*
-        if (Physics.SphereCast(RotationRoot.transform.position + RotationRoot.transform.up * (_controller.center.y + 0.1f), _controller.radius, RotationRoot.transform.up * -1f, out hit, 0.1f + MaxGroundCheckDistance, GroundLayerMask))
-        {
-            _onGround = true;
-        }
-        */
         if (Physics.Raycast(RotationRoot.transform.position + RotationRoot.transform.up * 0.1f, RotationRoot.transform.up * -1f, out hit, 0.1f + MaxGroundCheckDistance, GroundLayerMask))
         {
             _onGround = true;
@@ -84,12 +180,6 @@ public class CarController : MonoBehaviour
             _forwardInput = Mathf.Clamp(Input.GetAxis("Vertical"), -0.5f, 1f); // Backwards driving speed is half
             _steeringInput = Input.GetAxis("Horizontal");
         }
-
-        /*
-        newForward *= forwardInput * Acceleration * dt;
-        newForward = Quaternion.AngleAxis(steeringInput * TurningSpeed * dt, Vector3.up) * newForward;
-        newForward += Vector3.down * Gravity * dt;
-        */
 
         // Add acceleration only if on ground
         if (_onGround)
