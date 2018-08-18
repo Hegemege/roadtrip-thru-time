@@ -31,6 +31,9 @@ public class CarController : MonoBehaviour
     public LayerMask ObstacleLayerMask;
     public float ObstacleHitVelocityClamp;
 
+    [HideInInspector]
+    public float Energy;
+
     // Private
 
     private CharacterController _controller;
@@ -165,6 +168,18 @@ public class CarController : MonoBehaviour
         {
             _forwardInput = Mathf.Clamp(Input.GetAxis("Vertical"), -0.5f, 1f); // Backwards driving speed is half
             _steeringInput = Input.GetAxis("Horizontal");
+
+            // Calculate energy loss
+            if (Energy > 0f)
+            {
+                Energy -= dt * GameManager.Instance.AccelerationEnergyConsumption;
+            }
+            else
+            {
+                _forwardInput = 0f;
+                _steeringInput = 0f;
+                Energy = 0f;
+            }
         }
 
         // Add acceleration only if on ground

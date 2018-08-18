@@ -159,7 +159,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1847
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -190,8 +190,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TimeManager: {fileID: 0}
+  ActiveCar: {fileID: 0}
+  RecordSnapshots: 0
+  Rewinding: 0
+  AllowTimeRewind: 0
+  SpawnEnergy: 100
+  AccelerationEnergyConsumption: 1
   Camera: {fileID: 20294178711804702}
   CarPool: {fileID: 114469672890190480}
+  GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}
 --- !u!114 &114469672890190480
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,4 +225,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881e78c06bcc75b4ebc00a1f81ea6064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxSnapshots: 0

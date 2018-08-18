@@ -26,10 +26,15 @@ public class GameManager : MonoBehaviour
     public bool Rewinding;
 
     public bool AllowTimeRewind;
+    public float SpawnEnergy;
+    public float AccelerationEnergyConsumption;
 
     // Self references
     public Camera Camera;
     public CarPool CarPool;
+
+    // Other
+    public GameObject GameUI;
 
     void Awake()
     {
@@ -46,6 +51,9 @@ public class GameManager : MonoBehaviour
         // Self references
         TimeManager = GetComponent<TimeManager>();
 
+        // Instantiate game ui
+        var ui = Instantiate(GameUI);
+        ui.transform.parent = transform;
 
         // Start the level
         // TODO: Check if not in menu or other funny business
@@ -72,6 +80,7 @@ public class GameManager : MonoBehaviour
             var newCar = CarPool.GetPooledObject();
             newCar.gameObject.SetActive(true);
             SetNewCar(newCar, ActiveCar.transform);
+            newCar.component.Energy = ActiveCar.Energy;
 
             newCar.component.ApplySnapshot(oldCar.GetTimeSnapshot());
         }
@@ -89,6 +98,7 @@ public class GameManager : MonoBehaviour
         newCar.gameObject.SetActive(true);
 
         SetNewCar(newCar, carSpawn.transform);
+        newCar.component.Energy = SpawnEnergy;
 
         // Destroy spawn, no use for it anymore
         GameObject.Destroy(carSpawn);

@@ -7390,6 +7390,7 @@ MonoBehaviour:
   ObstacleLayerMask:
     serializedVersion: 2
     m_Bits: 1
+  ObstacleHitVelocityClamp: 0.15
 --- !u!143 &143180025412570984
 CharacterController:
   m_ObjectHideFlags: 1
