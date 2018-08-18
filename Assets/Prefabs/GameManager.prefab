@@ -193,12 +193,13 @@ MonoBehaviour:
   ActiveCar: {fileID: 0}
   RecordSnapshots: 0
   Rewinding: 0
-  AllowTimeRewind: 0
+  AllowTimeRewind: 1
   SpawnEnergy: 100
   AccelerationEnergyConsumption: 10
   Camera: {fileID: 20294178711804702}
   CarPool: {fileID: 114469672890190480}
   GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}
+  GameUIController: {fileID: 0}
 --- !u!114 &114469672890190480
 MonoBehaviour:
   m_ObjectHideFlags: 1

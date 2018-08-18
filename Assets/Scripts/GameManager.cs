@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum UIOverlayState
+{
+    Record,
+    Rewind,
+    Play,
+    Stop
+}
+
 public class GameManager : MonoBehaviour
 {
     //Singleton
@@ -36,8 +44,17 @@ public class GameManager : MonoBehaviour
     // Other
     public GameObject GameUI;
 
+    [HideInInspector]
+    public GameUIController GameUIController;
+
     void Awake()
     {
+        var currentInstance = _instance != null ? _instance : this;
+
+        // Create new UI
+        var ui = Instantiate(GameUI);
+        currentInstance.GameUIController = ui.GetComponent<GameUIController>();
+
         // Setup singleton
         if (_instance != null)
         {
@@ -51,10 +68,6 @@ public class GameManager : MonoBehaviour
         // Self references
         TimeManager = GetComponent<TimeManager>();
 
-        // Instantiate game ui
-        var ui = Instantiate(GameUI);
-        ui.transform.parent = transform;
-
         // Start the level
         // TODO: Check if not in menu or other funny business
         StartLevel();
@@ -66,12 +79,14 @@ public class GameManager : MonoBehaviour
         // Rewinding input
         if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind)
         {
+            GameUIController.SetUIState(UIOverlayState.Rewind);
             Rewinding = true;
             ActiveCar.PlayerControlled = false;
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind)
         {
+            GameUIController.SetUIState(UIOverlayState.Record);
             Rewinding = false;
             TimeManager.CutTimeline(ActiveCar);
 

@@ -104,7 +104,7 @@ public class CarController : MonoBehaviour
     /// <returns></returns>
     public TimeSnapshot GetTimeSnapshot()
     {
-        return new TimeSnapshot(transform.position, _velocity, RotationRoot.transform.rotation, _targetRotation, _forwardInput, _steeringInput);
+        return new TimeSnapshot(transform.position, _velocity, RotationRoot.transform.rotation, _targetRotation, _forwardInput, _steeringInput, Energy);
     }
 
     /// <summary>
@@ -118,6 +118,7 @@ public class CarController : MonoBehaviour
         _targetRotation = snapshot.TargetRotation;
         _forwardInput = snapshot.ForwardInput;
         _steeringInput = snapshot.SteeringInput;
+        Energy = snapshot.Energy;
     }
 
     public void SetTimeline(LinkedList<TimeSnapshot> timeline, LinkedListNode<TimeSnapshot> current)

@@ -10,8 +10,9 @@ public struct TimeSnapshot
     public Quaternion TargetRotation;
     public float ForwardInput;
     public float SteeringInput;
+    public float Energy;
 
-    public TimeSnapshot(Vector3 position, Vector3 velocity, Quaternion rotation, Quaternion targetRotation, float forwardInput, float steeringInput)
+    public TimeSnapshot(Vector3 position, Vector3 velocity, Quaternion rotation, Quaternion targetRotation, float forwardInput, float steeringInput, float energy)
     {
         CarPosition = position;
         Velocity = velocity;
@@ -19,5 +20,6 @@ public struct TimeSnapshot
         TargetRotation = targetRotation;
         ForwardInput = forwardInput;
         SteeringInput = steeringInput;
+        Energy = energy;
     }
 }
