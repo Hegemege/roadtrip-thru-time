@@ -4,25 +4,35 @@ using System.Collections.Generic;
 
 public class PoolableParticleSystem : MonoBehaviour
 {
-    private ParticleSystem _ps;
+    private ParticleSystem[] _ps;
 
     void Awake()
     {
-        _ps = GetComponentInChildren<ParticleSystem>();
+        _ps = GetComponentsInChildren<ParticleSystem>();
     }
 
     void Update()
     {
-        if (!_ps.IsAlive())
+        var setInactive = false;
+        for (var i = 0; i < _ps.Length; i++)
         {
-            _ps.Clear();
-            gameObject.SetActive(false);
-            return;
+            var ps = _ps[i];
+            if (!ps.IsAlive())
+            {
+                ps.Clear();
+                setInactive = true;
+                continue;
+            }
+
+            if (!ps.isPlaying)
+            {
+                ps.Play();
+            }
         }
 
-        if (!_ps.isPlaying)
+        if (setInactive)
         {
-            _ps.Play();
+            gameObject.SetActive(false);
         }
     }
 }

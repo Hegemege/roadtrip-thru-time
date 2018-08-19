@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
     // Self references
     public Camera Camera;
     public CarPool CarPool;
+    public ParticleSystemPool ExplosionPSPool;
 
     // Other
     public GameObject GameUI;

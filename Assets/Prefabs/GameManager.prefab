@@ -45,6 +45,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1328974263125708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4846159805430828}
+  m_Layer: 0
+  m_Name: PoolContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1648787772645544
 GameObject:
   m_ObjectHideFlags: 1
@@ -56,6 +71,22 @@ GameObject:
   - component: {fileID: 114469672890190480}
   m_Layer: 0
   m_Name: CarPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1683497925984604
+GameObject:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4354329757543818}
+  - component: {fileID: 114688460452804714}
+  m_Layer: 0
+  m_Name: ExplosionPSPool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,6 +107,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4354329757543818
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1683497925984604}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4848310904483490}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4458185512038626
 Transform:
   m_ObjectHideFlags: 1
@@ -101,6 +145,7 @@ Transform:
   m_Children:
   - {fileID: 4716591914860138}
   - {fileID: 4848310904483490}
+  - {fileID: 4846159805430828}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -117,6 +162,19 @@ Transform:
   m_Father: {fileID: 4712273586330000}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4846159805430828
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1328974263125708}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4712273586330000}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4848310904483490
 Transform:
   m_ObjectHideFlags: 1
@@ -128,6 +186,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4458185512038626}
+  - {fileID: 4354329757543818}
   m_Father: {fileID: 4712273586330000}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -198,8 +257,10 @@ MonoBehaviour:
   AccelerationEnergyConsumption: 10
   EnergyPerCollectible: 50
   RewindCount: 5
+  LevelEnded: 0
   Camera: {fileID: 20294178711804702}
   CarPool: {fileID: 114469672890190480}
+  ExplosionPSPool: {fileID: 114688460452804714}
   GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}
   GameUIController: {fileID: 0}
 --- !u!114 &114469672890190480
@@ -228,3 +289,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881e78c06bcc75b4ebc00a1f81ea6064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114688460452804714
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1683497925984604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf41d7f03b9d36141989fa16eeb4276d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PooledObjectPrefab: {fileID: 1585776958970252, guid: e2c66e21f89d5ad4ab49b7db6b43a397,
+    type: 2}
+  WillGrow: 1
+  Pool: []
+  Container: {fileID: 1328974263125708}
