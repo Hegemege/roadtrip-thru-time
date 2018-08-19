@@ -35,6 +35,7 @@ public class CarController : MonoBehaviour
     public float Energy;
 
     public List<Rotator> WheelRotators;
+    public float InvulnerableToCarsStartTime;
 
     // Private
 
@@ -50,24 +51,50 @@ public class CarController : MonoBehaviour
     private LinkedListNode<TimeSnapshot> _currentSnapshot;
     private bool _playingTimeline;
 
+    private float _invulnerableTimer;
+    public bool Invulnerable;
+    public bool Destroyed;
+    public float DestroyOnImpactVelocity;
+
+    public Vector3 Velocity { get { return _velocity; } } // quick hacks
+
     void Awake()
     {
+        Invulnerable = true;
+        _invulnerableTimer = InvulnerableToCarsStartTime;
         _controller = GetComponent<CharacterController>();
         Reset();
     }
 
     void Update()
     {
-        var scale = Vector3.ProjectOnPlane(_velocity, transform.up).magnitude * (Vector3.Dot(_velocity, transform.forward) > 0f ? -1f : 1f);
+        if (GameManager.Instance.LevelEnded) return;
+
+        if (GameManager.Instance.Rewinding)
+        {
+            Invulnerable = true;
+            _invulnerableTimer = InvulnerableToCarsStartTime;
+        }
+
+        if (Invulnerable)
+        {
+            _invulnerableTimer -= Time.deltaTime;
+            if (_invulnerableTimer <= 0f)
+            {
+                Invulnerable = false;
+            }
+        }
+
+        var rotationScale = Vector3.ProjectOnPlane(_velocity, transform.up).magnitude * (Vector3.Dot(_velocity, transform.forward) > 0f ? -1f : 1f);
         for (var i = 0; i < WheelRotators.Count; i++)
         {
-            WheelRotators[i].RotationScale = scale;
+            WheelRotators[i].RotationScale = rotationScale;
         }
     }
 
     void FixedUpdate()
     {
-        if (GameManager.Instance.Rewinding)
+        if (GameManager.Instance.Rewinding && !GameManager.Instance.LevelEnded)
         {
             if (_playingTimeline)
             {
@@ -82,7 +109,7 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        if (_playingTimeline)
+        if (_playingTimeline && !GameManager.Instance.LevelEnded)
         {
             // If there are snapshots left to be played back, play them. Otherwise, set all inputs to zero, let the physics play out and record additional snapshots
             if (_currentSnapshot.Next != null)
@@ -93,10 +120,19 @@ public class CarController : MonoBehaviour
             }
             else
             {
-                _forwardInput = 0f;
-                _steeringInput = 0f;
-                _timeline.AddLast(GetTimeSnapshot());
-                _currentSnapshot = _timeline.Last;
+                if (PlayerControlled)
+                {
+                    // Not playing timeline anymore
+                    _playingTimeline = false;
+                    GameManager.Instance.TimeManager.SetTimeline(_timeline);
+                }
+                else
+                {
+                    _forwardInput = 0f;
+                    _steeringInput = 0f;
+                    _timeline.AddLast(GetTimeSnapshot());
+                    _currentSnapshot = _timeline.Last;
+                }
             }
         }
 
@@ -148,6 +184,9 @@ public class CarController : MonoBehaviour
         _timeline = new LinkedList<TimeSnapshot>();
         _currentSnapshot = null;
         _playingTimeline = false;
+        Destroyed = false;
+        Invulnerable = true;
+        _invulnerableTimer = InvulnerableToCarsStartTime;
     }
 
     /// <summary>
@@ -170,23 +209,36 @@ public class CarController : MonoBehaviour
 
         var showSkidMarks = false;
 
-        if (PlayerControlled)
+        if (PlayerControlled && !GameManager.Instance.LevelEnded)
         {
             _forwardInput = Mathf.Clamp(Input.GetAxis("Vertical"), -0.5f, 1f); // Backwards driving speed is half
             _steeringInput = Input.GetAxis("Horizontal");
 
             // Calculate energy loss
             var energyConsumption = Mathf.Abs(_forwardInput);
-            if (Energy > 0f && energyConsumption > 0f)
+            if (Energy > 0f)
             {
-                Energy -= dt * GameManager.Instance.AccelerationEnergyConsumption * energyConsumption;
+                if (energyConsumption > 0f)
+                {
+                    Energy -= dt * GameManager.Instance.AccelerationEnergyConsumption * energyConsumption;
+                }
+                else
+                {
+                    Energy -= dt * GameManager.Instance.IdleEnergyConsumption;
+                }
             }
-            else if (Energy <= 0f)
+            else
             {
                 _forwardInput = 0f;
                 _steeringInput = 0f;
                 Energy = 0f;
             }
+        }
+
+        if (GameManager.Instance.LevelEnded)
+        {
+            _steeringInput = 0f;
+            _forwardInput = 0f;
         }
 
         // Add acceleration only if on ground
@@ -251,10 +303,17 @@ public class CarController : MonoBehaviour
         var velocityNormalized = _velocity.normalized;
         var hitRaycastOrigin = transform.position + _controller.center.y * transform.up;
         var hitRaycastRange = _controller.radius + 0.4f;
-        if (Physics.Raycast(hitRaycastOrigin, velocityNormalized, hitRaycastRange, ObstacleLayerMask) ||
-           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -0.75f, hitRaycastRange, ObstacleLayerMask) ||
-           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * 0.75f, hitRaycastRange, ObstacleLayerMask))
+        RaycastHit hit;
+        if (Physics.Raycast(hitRaycastOrigin, velocityNormalized, out hit, hitRaycastRange, ObstacleLayerMask) ||
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -0.75f, out hit, hitRaycastRange, ObstacleLayerMask) ||
+           Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * 0.75f, out hit, hitRaycastRange, ObstacleLayerMask))
         {
+            if (_velocity.magnitude > DestroyOnImpactVelocity && Vector3.Dot(_velocity.normalized, hit.normal) < -0.5f)
+            {
+                DestroySelf();
+                return;
+            }
+
             _velocity = Vector3.ClampMagnitude(_velocity, ObstacleHitVelocityClamp);
         }
 
@@ -354,9 +413,43 @@ public class CarController : MonoBehaviour
     {
         if (other.CompareTag("EnergyCollectible"))
         {
+            GameManager.Instance.CollectiblesLeft -= 1;
             Destroy(other.gameObject);
             Energy += GameManager.Instance.EnergyPerCollectible;
             Energy = Mathf.Clamp(Energy, 0f, GameManager.Instance.SpawnEnergy);
         }
+        else if (other.CompareTag("PlayerTrigger"))
+        {
+            if (Invulnerable) return;
+
+            var otherController = other.transform.parent.GetComponent<CarController>();
+            if (otherController.Invulnerable) return;
+
+            otherController.Destroyed = true;
+
+            // Destroy self only, the other car will destroy themselves
+            DestroySelf();
+        }
+        else if (other.CompareTag("ExitZone"))
+        {
+            var nextScene = other.GetComponent<ExitZoneController>().NextScene;
+            GameManager.Instance.EndLevel(nextScene);
+        }
+    }
+
+    private void DestroySelf()
+    {
+        Destroyed = true;
+
+        var particles = GameManager.Instance.ExplosionPSPool.GetPooledObject();
+        particles.transform.position = transform.position;
+
+        // If we are the active car, tell gamemanager to switch camera to some other car
+        if (GameManager.Instance.ActiveCar == this)
+        {
+            GameManager.Instance.ActiveCarDestroyed();
+        }
+
+        gameObject.SetActive(false);
     }
 }

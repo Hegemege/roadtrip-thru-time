@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4716591914860138}
   - component: {fileID: 20294178711804702}
   - component: {fileID: 81210922282592752}
+  - component: {fileID: 114486186074280278}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -255,13 +256,17 @@ MonoBehaviour:
   AllowTimeRewind: 1
   SpawnEnergy: 100
   AccelerationEnergyConsumption: 10
+  IdleEnergyConsumption: 2
   EnergyPerCollectible: 50
   RewindCount: 5
   LevelEnded: 0
+  LevelEndState: 0
   Camera: {fileID: 20294178711804702}
   CarPool: {fileID: 114469672890190480}
   ExplosionPSPool: {fileID: 114688460452804714}
   GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}
+  FadeUI: {fileID: 1516040024240696, guid: 6249e50125a9b8f4aa237e518911c687, type: 2}
+  SceneCameraOffset: {x: 0, y: 0, z: 0}
   GameUIController: {fileID: 0}
 --- !u!114 &114469672890190480
 MonoBehaviour:
@@ -289,6 +294,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 881e78c06bcc75b4ebc00a1f81ea6064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114486186074280278
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1181489009395394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 070f45aa5912eef46a3c582534460a5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Smoothing: 0.035
 --- !u!114 &114688460452804714
 MonoBehaviour:
   m_ObjectHideFlags: 1

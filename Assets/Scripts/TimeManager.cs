@@ -15,6 +15,8 @@ public class TimeManager : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!GameManager.Instance.ActiveCar || GameManager.Instance.ActiveCar.Destroyed) return;
+
         if (GameManager.Instance.RecordSnapshots)
         {
             var car = GameManager.Instance.ActiveCar;
@@ -63,5 +65,11 @@ public class TimeManager : MonoBehaviour
             _snapshots.RemoveLast();
             tail = _snapshots.Last;
         }
+    }
+
+    public void SetTimeline(LinkedList<TimeSnapshot> timeline)
+    {
+        _snapshots = timeline;
+        _current = timeline.Last;
     }
 }

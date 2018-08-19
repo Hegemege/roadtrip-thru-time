@@ -1651,6 +1651,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1870247788236170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4813377820648482}
+  - component: {fileID: 135460562611378264}
+  m_Layer: 13
+  m_Name: Trigger
+  m_TagString: PlayerTrigger
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1874911248898702
 GameObject:
   m_ObjectHideFlags: 1
@@ -2756,6 +2772,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4781948230447118}
+  - {fileID: 4813377820648482}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -180.00002, z: 0}
@@ -3008,6 +3025,19 @@ Transform:
   m_Father: {fileID: 4350019763388642}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -17.579, y: 90.00001, z: 179.99998}
+--- !u!4 &4813377820648482
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1870247788236170}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4600496183327362}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4816060996299256
 Transform:
   m_ObjectHideFlags: 1
@@ -7397,6 +7427,10 @@ MonoBehaviour:
   WheelRotators:
   - {fileID: 114920840850960018}
   - {fileID: 114645030468960696}
+  InvulnerableToCarsStartTime: 1.5
+  Invulnerable: 0
+  Destroyed: 0
+  DestroyOnImpactVelocity: 0.9
 --- !u!114 &114645030468960696
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7425,6 +7459,18 @@ MonoBehaviour:
   RotationAxis: {x: 1, y: 0, z: 0}
   RotationSpeed: -90
   RotationScale: 1
+--- !u!135 &135460562611378264
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1870247788236170}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.8731799
+  m_Center: {x: -5.9349905e-17, y: 1.2299881, z: -0.06458819}
 --- !u!143 &143180025412570984
 CharacterController:
   m_ObjectHideFlags: 1

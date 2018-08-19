@@ -12,6 +12,11 @@ public class GameUIController : MonoBehaviour
     public GameObject PlayOverlay;
     public GameObject StopOverlay;
 
+    public GameObject InfoFrameOverlay;
+    public GameObject FailFuelText;
+    public GameObject FailTimelineText;
+    public GameObject SuccessText;
+
     public Text RewindsText;
 
     public float FlashingSpeed;
@@ -21,6 +26,8 @@ public class GameUIController : MonoBehaviour
     private bool _visible;
     private int _previousRewindsCount;
 
+    private float _levelEndTimer;
+
     void Awake()
     {
         RecordOverlay.SetActive(true);
@@ -28,12 +35,47 @@ public class GameUIController : MonoBehaviour
         PlayOverlay.SetActive(false);
         StopOverlay.SetActive(false);
 
+        InfoFrameOverlay.SetActive(false);
+        FailFuelText.SetActive(false);
+        FailTimelineText.SetActive(false);
+        SuccessText.SetActive(false);
+
         _state = UIOverlayState.Record;
         _visible = true;
     }
 
     void Update()
     {
+        if (GameManager.Instance.LevelEnded && !GameManager.Instance.ExitingLevel)
+        {
+            _levelEndTimer += Time.deltaTime;
+            if (_levelEndTimer > 1f)
+            {
+                InfoFrameOverlay.SetActive(true);
+                if (GameManager.Instance.LevelEndState == LevelEndState.Success) SuccessText.SetActive(true);
+                if (GameManager.Instance.LevelEndState == LevelEndState.FailFuel) FailFuelText.SetActive(true);
+                if (GameManager.Instance.LevelEndState == LevelEndState.FailTimeline) FailTimelineText.SetActive(true);
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    GameManager.Instance.LevelEndInput = 1;
+                }
+                else if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    GameManager.Instance.LevelEndInput = 2;
+                }
+            }
+            SetUIState(UIOverlayState.Stop);
+            return;
+        }
+        else
+        {
+            InfoFrameOverlay.SetActive(false);
+            FailFuelText.SetActive(false);
+            FailTimelineText.SetActive(false);
+            SuccessText.SetActive(false);
+        }
+
         if (!GameManager.Instance.ActiveCar) return;
 
         var dt = Time.deltaTime;

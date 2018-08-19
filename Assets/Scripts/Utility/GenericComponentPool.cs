@@ -40,6 +40,11 @@ public class GenericComponentPool<T> : MonoBehaviour
 
     }
 
+    public void Clear()
+    {
+        Pool.Clear();
+    }
+
     /// <summary>
     /// Return an instance of the prefab the pool is used to handle
     /// </summary>

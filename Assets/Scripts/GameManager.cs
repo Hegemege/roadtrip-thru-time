@@ -11,6 +11,13 @@ public enum UIOverlayState
     Stop
 }
 
+public enum LevelEndState
+{
+    FailFuel,
+    FailTimeline,
+    Success
+}
+
 public class GameManager : MonoBehaviour
 {
     //Singleton
@@ -36,12 +43,15 @@ public class GameManager : MonoBehaviour
     public bool AllowTimeRewind;
     public float SpawnEnergy;
     public float AccelerationEnergyConsumption;
+    public float IdleEnergyConsumption;
     public float EnergyPerCollectible;
 
     public int RewindCount;
 
-    [HideInInspector]
     public bool LevelEnded;
+    private float _levelEndTimer;
+    [HideInInspector]
+    public LevelEndState LevelEndState;
 
     // Self references
     public Camera Camera;
@@ -50,17 +60,49 @@ public class GameManager : MonoBehaviour
 
     // Other
     public GameObject GameUI;
+    public GameObject FadeUI;
+
+    public GameObject CarSpawn;
+
+    // History of cars in order
+    private List<CarController> _carHistory;
+
+    [HideInInspector]
+    public Vector3 SceneCameraOffset;
 
     [HideInInspector]
     public GameUIController GameUIController;
+
+    private FadeUIController _fadeUIController;
+    private float _fadeAmount;
+    private float _fadeTarget;
+    private float _fadeTimer;
+    private float _fadeTime;
+    private float _fadeStart;
+
+    public bool LoadingScene;
+    public bool ExitingLevel;
+    public int CollectiblesLeft;
+    public int LevelEndInput;
 
     void Awake()
     {
         var currentInstance = _instance != null ? _instance : this;
 
+        var inMenu = SceneManager.GetActiveScene().name == "menu";
+
+        if (currentInstance != this)
+        {
+            GameManager.Instance.Camera = Camera;
+            Camera.transform.parent = GameManager.Instance.transform;
+        }
+
         // Create new UI
-        var ui = Instantiate(GameUI);
-        currentInstance.GameUIController = ui.GetComponent<GameUIController>();
+        if (!inMenu)
+        {
+            var ui = Instantiate(GameUI);
+            currentInstance.GameUIController = ui.GetComponent<GameUIController>();
+        }
 
         // Setup singleton
         if (_instance != null)
@@ -75,23 +117,30 @@ public class GameManager : MonoBehaviour
         // Self references
         TimeManager = GetComponent<TimeManager>();
 
+        var fadeUI = Instantiate(FadeUI);
+        fadeUI.transform.parent = transform;
+        _fadeUIController = fadeUI.GetComponent<FadeUIController>();
+        _fadeUIController.SetFade(0f);
+
+        _carHistory = new List<CarController>();
+
         // Start the level
-        // TODO: Check if not in menu or other funny business
-        StartLevel();
+
+        ResetState();
     }
 
     void Update()
     {
         var carExists = ActiveCar != null;
         // Rewinding input
-        if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind && !Rewinding && RewindCount > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && carExists && AllowTimeRewind && !Rewinding && RewindCount > 0 && !LevelEnded)
         {
             GameUIController.SetUIState(UIOverlayState.Rewind);
             Rewinding = true;
             ActiveCar.PlayerControlled = false;
         }
 
-        if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind && Rewinding)
+        if (Input.GetKeyUp(KeyCode.Space) && carExists && AllowTimeRewind && Rewinding && !LevelEnded)
         {
             GameUIController.SetUIState(UIOverlayState.Record);
             Rewinding = false;
@@ -109,22 +158,66 @@ public class GameManager : MonoBehaviour
         }
 
         // Update time states - record only if car exists and not rewinding time
-        RecordSnapshots = carExists && !Rewinding && AllowTimeRewind;
+        RecordSnapshots = carExists && !Rewinding && AllowTimeRewind && !LevelEnded;
+
+
+        // Update level end state
+        if (ActiveCar == null && !LevelEnded)
+        {
+            _levelEndTimer += Time.deltaTime;
+            if (_levelEndTimer > 2f)
+            {
+                LevelEndState = LevelEndState.FailTimeline;
+                EndLevel(SceneManager.GetActiveScene().name);
+            }
+        }
+
+        // Check for out of fuel
+        if (ActiveCar != null && RewindCount == 0 && !LevelEnded && ActiveCar.Velocity.magnitude < 0.1f)
+        {
+            LevelEndState = LevelEndState.FailFuel;
+            EndLevel(SceneManager.GetActiveScene().name);
+        }
+
+        // Fading
+        if (_fadeTimer > 0f)
+        {
+            _fadeTimer -= Time.deltaTime;
+
+            var fadeT = 1f - _fadeTimer / _fadeTime;
+            _fadeAmount = Mathf.Lerp(_fadeStart, _fadeTarget, fadeT);
+
+            _fadeUIController.SetFade(_fadeAmount);
+
+            if (_fadeTimer <= 0f)
+            {
+                _fadeTimer = 0f;
+                _fadeAmount = _fadeTarget;
+            }
+        }
     }
 
-    public void StartLevel()
+    private void ResetState()
+    {
+        LevelEndInput = 0;
+        LevelEnded = false;
+        ActiveCar = null;
+        ExitingLevel = false;
+        _levelEndTimer = 0f;
+        _carHistory.Clear();
+        CarPool.Clear();
+    }
+
+    public void SpawnCar(GameObject spawn)
     {
         // Spawn a new car at car spawn
-        var carSpawn = GameObject.Find("CarSpawn");
+        SceneCameraOffset = spawn.transform.position - Camera.transform.position;
 
         var newCar = CarPool.GetPooledObject();
         newCar.gameObject.SetActive(true);
 
-        SetNewCar(newCar, carSpawn.transform);
+        SetNewCar(newCar, spawn.transform);
         newCar.component.Energy = SpawnEnergy;
-
-        // Destroy spawn, no use for it anymore
-        GameObject.Destroy(carSpawn);
     }
 
     public void SetNewCar(Component<CarController> newCar, Transform spawnTransform)
@@ -139,11 +232,80 @@ public class GameManager : MonoBehaviour
 
         // Set camera to follow the car
         Camera.transform.parent = newCar.gameObject.transform;
+
+        _carHistory.Add(newCar.component);
     }
 
-    public void EndLevel()
+    public void ActiveCarDestroyed()
     {
-        // Reuse the car 
-        ActiveCar.gameObject.SetActive(false);
+        Camera.transform.parent = transform;
+        // Find last active car, control that
+
+        ActiveCar = null;
+
+        for (var i = _carHistory.Count - 1; i >= 0; i--)
+        {
+            if (_carHistory[i] != null && !_carHistory[i].Destroyed && _carHistory[i].gameObject.activeInHierarchy)
+            {
+                ActiveCar = _carHistory[i];
+                ActiveCar.PlayerControlled = true;
+                Camera.transform.parent = ActiveCar.transform;
+
+                break;
+            }
+        }
+    }
+
+    public void EndLevel(string targetScene = "")
+    {
+        if (ExitingLevel) return;
+
+        // Show UI
+        LevelEnded = true;
+        if (targetScene != "")
+        {
+            LevelEndState = LevelEndState.Success;
+        }
+
+        StartCoroutine(StartLevelEndFade(targetScene));
+    }
+
+    public IEnumerator StartLevelEndFade(string nextScene)
+    {
+        while (LevelEndInput == 0) yield return new WaitForEndOfFrame();
+
+        if (LevelEndInput == 2) nextScene = "menu";
+
+        ExitingLevel = true;
+        Fade(1.25f, 1f);
+        yield return new WaitForSeconds(1.25f);
+        ChangeLevel(nextScene);
+    }
+
+    public void ChangeLevel(string sceneName)
+    {
+        if (ActiveCar)
+        {
+            ActiveCar.gameObject.SetActive(false);
+        }
+
+        Destroy(Camera);
+
+        LoadingScene = true;
+        SceneManager.LoadScene(sceneName);
+        LoadingScene = false;
+
+        Fade(1.25f, 0f);
+
+        ExitingLevel = false;
+        ResetState();
+    }
+
+    public void Fade(float time, float target)
+    {
+        _fadeTime = time;
+        _fadeTimer = time;
+        _fadeTarget = target;
+        _fadeStart = _fadeAmount;
     }
 }
