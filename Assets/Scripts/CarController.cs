@@ -301,14 +301,15 @@ public class CarController : MonoBehaviour
 
         // If bumping into objects (front, frontleft, frontright), decrease speed
         var velocityNormalized = _velocity.normalized;
-        var hitRaycastOrigin = transform.position + _controller.center.y * transform.up;
+        var hitRaycastOrigin = transform.position + 0.1f * transform.up;
         var hitRaycastRange = _controller.radius + 0.4f;
         RaycastHit hit;
         if (Physics.Raycast(hitRaycastOrigin, velocityNormalized, out hit, hitRaycastRange, ObstacleLayerMask) ||
            Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * -0.75f, out hit, hitRaycastRange, ObstacleLayerMask) ||
            Physics.Raycast(hitRaycastOrigin, velocityNormalized + transform.right * 0.75f, out hit, hitRaycastRange, ObstacleLayerMask))
         {
-            if (_velocity.magnitude > DestroyOnImpactVelocity && Vector3.Dot(_velocity.normalized, hit.normal) < -0.5f)
+            var hitDot = Vector3.Dot(_velocity.normalized, Vector3.ProjectOnPlane(hit.normal, Vector3.up));
+            if (_velocity.magnitude > DestroyOnImpactVelocity && hitDot < -0.5f)
             {
                 DestroySelf();
                 return;
@@ -432,6 +433,7 @@ public class CarController : MonoBehaviour
         }
         else if (other.CompareTag("ExitZone"))
         {
+            GameManager.Instance.LevelEndState = LevelEndState.Success;
             var nextScene = other.GetComponent<ExitZoneController>().NextScene;
             GameManager.Instance.EndLevel(nextScene);
         }

@@ -62,6 +62,8 @@ public class GameManager : MonoBehaviour
     public GameObject GameUI;
     public GameObject FadeUI;
 
+    public bool DrawGameUI;
+
     public GameObject CarSpawn;
 
     // History of cars in order
@@ -98,7 +100,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Create new UI
-        if (!inMenu)
+        if (!inMenu && DrawGameUI)
         {
             var ui = Instantiate(GameUI);
             currentInstance.GameUIController = ui.GetComponent<GameUIController>();
@@ -158,7 +160,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Update time states - record only if car exists and not rewinding time
-        RecordSnapshots = carExists && !Rewinding && AllowTimeRewind && !LevelEnded;
+        RecordSnapshots = carExists && !Rewinding && !LevelEnded;
 
 
         // Update level end state
@@ -173,7 +175,7 @@ public class GameManager : MonoBehaviour
         }
 
         // Check for out of fuel
-        if (ActiveCar != null && RewindCount == 0 && !LevelEnded && ActiveCar.Velocity.magnitude < 0.1f)
+        if (ActiveCar != null && RewindCount == 0 && !LevelEnded && ActiveCar.Velocity.magnitude < 0.1f && ActiveCar.Energy <= 0f)
         {
             LevelEndState = LevelEndState.FailFuel;
             EndLevel(SceneManager.GetActiveScene().name);
@@ -262,10 +264,6 @@ public class GameManager : MonoBehaviour
 
         // Show UI
         LevelEnded = true;
-        if (targetScene != "")
-        {
-            LevelEndState = LevelEndState.Success;
-        }
 
         StartCoroutine(StartLevelEndFade(targetScene));
     }

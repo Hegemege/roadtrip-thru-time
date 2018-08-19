@@ -157,7 +157,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1181489009395394}
   m_LocalRotation: {x: 0.11429042, y: 0.88156396, z: -0.27563047, w: 0.36580136}
-  m_LocalPosition: {x: -28.419819, y: 18.817469, z: 16.825699}
+  m_LocalPosition: {x: -28.5, y: 18.817469, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4712273586330000}
@@ -219,7 +219,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 5943
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -266,8 +266,14 @@ MonoBehaviour:
   ExplosionPSPool: {fileID: 114688460452804714}
   GameUI: {fileID: 1765215046585918, guid: c58c6fbe8516eb04b91c2eed3f92a40c, type: 2}
   FadeUI: {fileID: 1516040024240696, guid: 6249e50125a9b8f4aa237e518911c687, type: 2}
+  DrawGameUI: 1
+  CarSpawn: {fileID: 0}
   SceneCameraOffset: {x: 0, y: 0, z: 0}
   GameUIController: {fileID: 0}
+  LoadingScene: 0
+  ExitingLevel: 0
+  CollectiblesLeft: 0
+  LevelEndInput: 0
 --- !u!114 &114469672890190480
 MonoBehaviour:
   m_ObjectHideFlags: 1

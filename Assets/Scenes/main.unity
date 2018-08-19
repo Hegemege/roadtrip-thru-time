@@ -91,7 +91,7 @@ LightmapSettings:
     m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 112000002, guid: 7bf15d4b47571ee4ebee5077e6289fdf,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -484,6 +484,14 @@ Prefab:
       propertyPath: CarSpawn
       value: 
       objectReference: {fileID: 90775078}
+    - target: {fileID: 4716591914860138, guid: 5790569c07b40f8418b781374cc57d53, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -28.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4716591914860138, guid: 5790569c07b40f8418b781374cc57d53, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 19.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5790569c07b40f8418b781374cc57d53, type: 2}
   m_IsPrefabAsset: 0
