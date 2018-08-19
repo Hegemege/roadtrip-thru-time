@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreditsUIController : MonoBehaviour
+public class MenuUIController : MonoBehaviour
 {
     private bool _triggered;
 
@@ -14,7 +14,7 @@ public class CreditsUIController : MonoBehaviour
         {
             _triggered = true;
             GameManager.Instance.LevelEndInput = 1;
-            GameManager.Instance.EndLevel("menu");
+            GameManager.Instance.EndLevel("Level_01");
         }
     }
 }

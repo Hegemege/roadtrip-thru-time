@@ -99,6 +99,9 @@ public class GameManager : MonoBehaviour
             Camera.transform.parent = GameManager.Instance.transform;
         }
 
+        currentInstance.AllowTimeRewind = AllowTimeRewind;
+        currentInstance.RewindCount = RewindCount;
+
         // Create new UI
         if (!inMenu && DrawGameUI)
         {
