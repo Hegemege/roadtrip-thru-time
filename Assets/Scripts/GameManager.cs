@@ -102,6 +102,8 @@ public class GameManager : MonoBehaviour
         currentInstance.AllowTimeRewind = AllowTimeRewind;
         currentInstance.RewindCount = RewindCount;
 
+        currentInstance.CollectiblesLeft = 0;
+
         // Create new UI
         if (!inMenu && DrawGameUI)
         {
