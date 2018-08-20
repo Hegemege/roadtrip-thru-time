@@ -7410,7 +7410,7 @@ MonoBehaviour:
   Gravity: 1.5
   GroundLayerMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 513
   MaxGroundCheckDistance: 0.4
   TerrainRotationLerpT: 0.2
   MaxTerrainAngle: 40
